@@ -13,13 +13,22 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre("save", function (next) {
-  if (!this.isModified("password")) return next();
-  bcrypt.hash(this.password, 10, (err, passwordHash) => {
-    if (err) return next(err);
-    this.password = passwordHash;
+userSchema.pre("save", async function (next) {
+  //below code using callbacks, remove async from main fn when using this
+  // if (!this.isModified("password")) return next();
+  // bcrypt.hash(this.password, 10, (err, passwordHash) => {
+  //   if (err) return next(err);
+  //   this.password = passwordHash;
+  //   next();
+  // });
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(this.password, salt);
+    this.password = hashedPassword;
     next();
-  });
+  } catch (error) {
+    next(error);
+  }
 });
 
 userSchema.methods.comparePassword = function (password, cb) {
