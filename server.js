@@ -20,17 +20,10 @@ connection.once("open", () => {
   console.log("MongoDB database connection established successfully");
 });
 
-const User = require("./models/User");
-const userInput = {
-  username: "check",
-  password: "pass1234",
-  role: "user",
-};
-const user = new User(userInput);
-user.save((err, document) => {
-  if (err) console.log(err);
-  console.log(document);
-});
+const usersRouter = require('./routes/users.route');
+app.use('/users', usersRouter);
+const todosRouter = require('./routes/todos.route');
+app.use('/todos', todosRouter);
 
 app.listen(port, () => {
   console.log(`server is running on port ${port}`);
