@@ -34,4 +34,19 @@ router.route("/delete/:id").delete(auth, async (req, res) => {
   }
 });
 
+router.route("/update/:id").post(auth, async (req, res) => {
+  try {
+    const { value } = req.body;
+    const updated = await Todo.updateOne(
+      { _id: req.params.id },
+      { value: value }
+    );
+    if (!updated)
+      throw Error("Something went wrong while trying to update the item");
+    res.status(200).json({ success: true });
+  } catch (e) {
+    res.status(400).json({ msg: e.message, success: false });
+  }
+});
+
 module.exports = router;
